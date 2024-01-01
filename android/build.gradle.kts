@@ -7,13 +7,10 @@ plugins {
 group = "funny.buildapp"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 android {
     compileSdk = 34
     defaultConfig {
+        namespace = "funny.buildapp.worklite"
         applicationId = "funny.buildapp.worklite"
         minSdk = 24
         targetSdk = 34

@@ -88,6 +88,7 @@ android {
     compileSdk = 34
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
+        namespace = "funny.buildapp.common"
         minSdk = 24
         targetSdk = 34
     }
