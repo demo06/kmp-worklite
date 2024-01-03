@@ -1,8 +1,6 @@
 package funny.buildapp.common.ui.page
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddTask
@@ -18,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import funny.buildapp.common.ui.route.AppNav
 import funny.buildapp.common.ui.route.Route
 import funny.buildapp.common.ui.route.RouteUtils
+import funny.buildapp.common.ui.theme.backgroundGradient
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.widgets.BottomBar
 import moe.tlaster.precompose.navigation.rememberNavigator
@@ -28,11 +27,8 @@ public fun HomePage() {
     val navBackStackEntry by navCtrl.currentEntry.collectAsState(null)
     val currentDestination = navBackStackEntry?.path
     Scaffold(
-        modifier = Modifier
+        modifier = Modifier.background(backgroundGradient)
             .systemBarsPadding(),
-        topBar = {
-                 Box(modifier = Modifier.fillMaxWidth().background(themeColor))
-        },
         floatingActionButton = {
             if (currentDestination == Route.HOME || currentDestination == Route.SCHEDULE) {
                 FloatingActionButton(
