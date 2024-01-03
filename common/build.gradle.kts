@@ -42,8 +42,12 @@ kotlin {
                 api(compose.runtime)
                 api(compose.ui)
                 api(compose.foundation)
+                api(compose.animation)
                 api(compose.materialIconsExtended)
                 api(compose.material3)
+                api(libs.precompose.base)
+                api(libs.precompose.viewmodel)
+                api(libs.dateTime)
             }
         }
 

@@ -3,12 +3,10 @@ package funny.buildapp.common.widgets
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -46,7 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,16 +62,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import funny.buildapp.common.ui.theme.themeColor
-import funny.buildapp.common.ui.theme.white
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import funny.buildapp.common.ui.route.BottomNavRoute
 import funny.buildapp.common.ui.theme.H5
 import funny.buildapp.common.ui.theme.H6
@@ -85,6 +78,11 @@ import funny.buildapp.common.ui.theme.black1
 import funny.buildapp.common.ui.theme.grey1
 import funny.buildapp.common.ui.theme.orange
 import funny.buildapp.common.ui.theme.orange1
+import funny.buildapp.common.ui.theme.themeColor
+import funny.buildapp.common.ui.theme.white
+import moe.tlaster.precompose.navigation.NavOptions
+import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.PopUpTo
 
 
 public data class TabTitle(
@@ -184,7 +182,7 @@ public fun NavigationItem(
     title: String,
     normalIcon: ImageVector,
     pressedIcon: ImageVector,
-    isSelected: Boolean=false,
+    isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     Column(
@@ -453,7 +451,7 @@ public fun FilterMenu(
     title: String,
     fontSize: TextUnit = H5,
     color: Color = black1,
-     icon: Int,
+    icon: Int,
     onClick: () -> Unit = {}
 ) {
     TextButton(modifier = modifier, onClick = onClick, shape = RoundedCornerShape(4.dp)) {
@@ -584,9 +582,8 @@ public fun SpaceLine() {
     )
 }
 
-// TODO: change this function args type
 @Composable
-public fun BottomBar(navCtrl: Any?=null) {
+public fun BottomBar(navCtrl: Navigator) {
     val bottomNavList = listOf(BottomNavRoute.Home, BottomNavRoute.Task, BottomNavRoute.Schedule)
     Column {
         Spacer(
@@ -596,26 +593,26 @@ public fun BottomBar(navCtrl: Any?=null) {
                 .background(backgroundColor)
         )
         Row(Modifier.fillMaxWidth().background(Color.White)) {
-            // TODO: change this function libs
-//            val navBackStackEntry by navCtrl.currentBackStackEntryAsState()
-//            val currentDestination = navBackStackEntry?.destination
+            val navBackStackEntry by navCtrl.currentEntry.collectAsState(null)
+            val currentDestination = navBackStackEntry?.path
             bottomNavList.forEach { screen ->
                 NavigationItem(
                     modifier = Modifier.weight(1f),
                     title = screen.title,
                     normalIcon = screen.normalIcon,
                     pressedIcon = screen.pressIcon,
-//                    isSelected = currentDestination?.hierarchy?.any { it.route == screen.routeName } == true,
+                    isSelected = currentDestination == screen.routeName,
                     onClick = {
-//                        if (currentDestination?.route != screen.routeName) {
-//                            navCtrl.navigate(screen.routeName) {
-//                                popUpTo(navCtrl.graph.findStartDestination().id) {
-//                                    saveState = true
-//                                }
-//                                launchSingleTop = true
-//                                restoreState = true
-//                            }
-//                        }
+                        if (currentDestination != screen.routeName) {
+                            navCtrl.navigate(
+                                screen.routeName,
+                                options = NavOptions(
+                                    launchSingleTop = true,
+                                    includePath = false,
+                                    popUpTo = PopUpTo(route = screen.routeName, inclusive = true)
+                                )
+                            )
+                        }
                     }
                 )
             }

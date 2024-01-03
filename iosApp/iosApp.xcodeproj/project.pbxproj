@@ -64,6 +64,7 @@
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
 				AE5AC4EC976C6DD7DDA5E22E /* Pods */,
+				D0D37D8ED461CF25FB2BF140 /* xcschemes */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,6 +103,14 @@
 			);
 			name = Pods;
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		D0D37D8ED461CF25FB2BF140 /* xcschemes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = xcschemes;
+			path = iosApp.xcworkspace/xcuserdata/wenbin.xcuserdatad/xcschemes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

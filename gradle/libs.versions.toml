@@ -2,13 +2,21 @@
 kotlin-version = "1.9.20"
 agp-version = "8.1.4"
 compose-version = "1.5.11"
+precompose-version="1.5.10"
+date-time="0.5.0"
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp.version" }
-android-library = { id = "com.android.library", version.ref = "agp.version" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin.version" }
+android-application = { id = "com.android.application", version.ref = "agp-version" }
+android-library = { id = "com.android.library", version.ref = "agp-version" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
-androidx-core = { module = "androidx.core:core-ktx", version = "1.10.1" }
+androidx-core = { module = "androidx.core:core-ktx", version = "1.12.0" }
 androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"
+precompose-base={module="moe.tlaster:precompose",version.ref="precompose-version"}
+precompose-viewmodel={module="moe.tlaster:precompose-viewmodel",version.ref="precompose-version"}
+dateTime={module="org.jetbrains.kotlinx:kotlinx-datetime",version.ref="date-time"}
+
+
+
