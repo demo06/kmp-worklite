@@ -78,6 +78,7 @@ public fun NewPlanPage(
         viewModel.mainEvent.collect {
             when (it) {
                 is DispatchEvent.ShowToast -> {
+                    snackState.showSnackbar("添加成功")
 //                    it.msg.showToast()
                 }
 
@@ -137,8 +138,8 @@ public fun NewPlanPage(
             }
             item {
                 DateCard(
-                    startTime ="2024-1-1",
-                    endTime ="2024-12-1",
+                    startTime =plan.startDate,
+                    endTime =plan.endDate,
                     startTimeClick = {
                         dialogState = 0
                         viewModel.dispatch(NewPlanAction.SetDialogState)
@@ -383,7 +384,6 @@ public fun TaskItem(
                 text = text,
                 color = white,
                 modifier = Modifier
-                    .width(90.dp)
                     .background(
                         themeColor.copy(0.8f),
                         RoundedCornerShape(8.dp)

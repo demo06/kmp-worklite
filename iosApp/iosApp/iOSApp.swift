@@ -10,6 +10,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let mainViewController = PlatformKt.MainViewController()
         window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
+       let a = NSHomeDirectory()
+        print(a)
         return true
     }
 }

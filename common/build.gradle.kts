@@ -1,8 +1,9 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("org.jetbrains.compose")
     id("com.android.library")
-    kotlin("native.cocoapods")
+    alias(libs.plugins.sqldelight)
 }
 
 group = "funny.buildapp"
@@ -16,9 +17,7 @@ kotlin {
         }
     }
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = "11"
-        }
+        jvmToolchain(11)
     }
     ios()
     iosX64()
@@ -61,23 +60,26 @@ kotlin {
             dependencies {
                 api(libs.androidx.appcompat)
                 api(libs.androidx.core)
+                api(libs.sqldelight.android)
             }
         }
 
         val desktopMain by getting {
             dependencies {
                 api(compose.preview)
+                api(libs.sqldelight.jvm)
             }
         }
 
-        val desktopTest by getting
+        val desktopTest by getting {}
 
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
+        val iosX64Main by getting {}
+        val iosArm64Main by getting {}
+        val iosSimulatorArm64Main by getting {}
         val iosMain by getting {
             dependencies {
+                api(libs.sqldelight.native)
             }
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
@@ -93,11 +95,19 @@ android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         namespace = "funny.buildapp.common"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 26
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("funny.buildapp")
+        }
+    }
+    linkSqlite=true
 }

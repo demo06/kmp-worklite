@@ -80,6 +80,7 @@ import funny.buildapp.common.ui.theme.orange
 import funny.buildapp.common.ui.theme.orange1
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.ui.theme.white
+import funny.buildapp.common.utils.timeStampToDate
 import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.PopUpTo
@@ -514,7 +515,7 @@ public fun <T> LazyListScope.gridItems(
 public fun MyDatePicker(
     isStartTime: Boolean = true,
     onDismiss: () -> Unit,
-    onConfirm: (Long) -> Unit
+    onConfirm: (String) -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
     val confirmEnabled by remember {
@@ -531,8 +532,8 @@ public fun MyDatePicker(
                             val utcTime = 8 * 60 * 60 * 1000
                             val oneDay = 24 * 60 * 60 * 1000 - 1000
                             val longTime = if (isStartTime) it - utcTime else it - utcTime + oneDay
-                            longTime
-                        } ?: 0
+                            longTime.timeStampToDate()
+                        } ?: "0"
                     )
                 },
                 enabled = confirmEnabled

@@ -8,5 +8,6 @@ public actual fun getPlatformName(): String {
 
 @Composable
 public fun UIShow() {
+
     App()
 }

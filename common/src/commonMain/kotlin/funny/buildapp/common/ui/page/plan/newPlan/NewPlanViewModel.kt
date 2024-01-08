@@ -1,12 +1,14 @@
 package funny.buildapp.common.ui.page.plan.newPlan
 
-import funny.buildapp.common.data.source.plan.Plan
+import funny.buildapp.Plans
+import funny.buildapp.common.data.PlanRepository
 import funny.buildapp.common.ui.page.BaseViewModel
 import funny.buildapp.common.ui.page.DispatchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.datetime.toLocalDate
 
 public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
-//    private val repo: PlanRepository
+    private val repo: PlanRepository by lazy { PlanRepository() }
 
     private val _uiState = MutableStateFlow(NewPlanUiState())
     public val uiState: MutableStateFlow<NewPlanUiState> = _uiState
@@ -17,8 +19,8 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
             is NewPlanAction.Save -> savePlan()
             is NewPlanAction.Delete -> deletePlan()
             is NewPlanAction.SetTitle -> setTitle(action.title)
-            is NewPlanAction.SetStartTime -> setStartTime(action.time)
-            is NewPlanAction.SetEndTime -> setEndTime(action.time)
+            is NewPlanAction.SetStartTime -> setStartTime(action.date)
+            is NewPlanAction.SetEndTime -> setEndTime(action.date)
             is NewPlanAction.SetInitialValue -> setInitialValue(action.value)
             is NewPlanAction.SetTargetValue -> setEndValue(action.value)
             is NewPlanAction.SetDialogState -> setDialogState()
@@ -44,29 +46,26 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
 
 
     private fun checkParams(): Boolean {
-        if (_uiState.value.plan.title.isEmpty()) {
+        return if (_uiState.value.plan.title.isEmpty()) {
             "标题不能为空".toast()
-            return false
-        }
-//        if (!compareDate(
-//                _uiState.value.plan.startDate.dateToString(),
-//                _uiState.value.plan.endDate.dateToString()
-//            )
-//        ) {
-//            "结束时间不能早于开始时间".toast()
-//            return false
-//        }
-        if (_uiState.value.plan.initialValue > _uiState.value.plan.targetValue) {
+            false
+        } else if (_uiState.value.plan.startDate.toLocalDate() > _uiState.value.plan.endDate.toLocalDate()) {
+            "结束时间不能早于开始时间".toast()
+            false
+        } else if (_uiState.value.plan.initialValue > _uiState.value.plan.targetValue) {
             "初始值不能大于目标值".toast()
-            return false
+            false
+        } else {
+            true
         }
-        return true
     }
 
     private fun savePlan() {
-//        if (!checkParams()) return
+        if (!checkParams()) return
+        repo.insert(_uiState.value.plan)
+        _event.sendEvent(DispatchEvent.Back)
 //        fetchData(
-//            request = { repo.upsert(_uiState.value.plan) },
+//            request = { },
 //            onSuccess = {
 //                "保存成功".toast()
 //                _event.sendEvent(DispatchEvent.Back)
@@ -95,21 +94,21 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
         _uiState.setState { copy(plan = _uiState.value.plan.copy(title = title)) }
     }
 
-    private fun setStartTime(time: Long) {
-//        _uiState.setState { copy(plan = _uiState.value.plan.copy(startDate = time)) }
+    private fun setStartTime(date: String) {
+        _uiState.setState { copy(plan = _uiState.value.plan.copy(startDate = date)) }
     }
 
-    private fun setEndTime(time: Long) {
-//        _uiState.setState { copy(plan = _uiState.value.plan.copy(endDate = time)) }
+    private fun setEndTime(date: String) {
+        _uiState.setState { copy(plan = _uiState.value.plan.copy(endDate = date)) }
     }
 
     private fun setInitialValue(value: Int) {
-        _uiState.setState { copy(plan = _uiState.value.plan.copy(initialValue = value)) }
+        _uiState.setState { copy(plan = _uiState.value.plan.copy(initialValue = value.toLong())) }
 
     }
 
     private fun setEndValue(value: Int) {
-        _uiState.setState { copy(plan = _uiState.value.plan.copy(targetValue = value)) }
+        _uiState.setState { copy(plan = _uiState.value.plan.copy(targetValue = value.toLong())) }
     }
 
     private fun setDialogState() {
@@ -117,13 +116,27 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
     }
 
     private fun setAdjustState() {
-        _uiState.setState { copy(plan = _uiState.value.plan.copy(autoAdjust = !_uiState.value.plan.autoAdjust)) }
+        _uiState.setState {
+            copy(
+                plan =
+                _uiState.value.plan.copy(autoAdjust = !_uiState.value.plan.autoAdjust)
+            )
+        }
     }
 
 }
 
 public data class NewPlanUiState(
-    val plan: Plan = Plan(),
+    val plan: Plans = Plans(
+        id = 0,
+        title = "",
+        startDate = "1970-01-01",
+        endDate = "1970-01-01",
+        initialValue = 0,
+        targetValue = 100,
+        autoAdjust = false,
+        state = 0
+    ),
     val datePickerDialog: Boolean = false,
 )
 
@@ -134,8 +147,8 @@ public sealed class NewPlanAction {
     public class GetPlanDetail(public val id: Int) : NewPlanAction()
     public data object SetDialogState : NewPlanAction()
     public class SetTitle(public val title: String) : NewPlanAction()
-    public class SetStartTime(public val time: Long) : NewPlanAction()
-    public class SetEndTime(public val time: Long) : NewPlanAction()
+    public class SetStartTime(public val date: String) : NewPlanAction()
+    public class SetEndTime(public val date: String) : NewPlanAction()
     public class SetInitialValue(public val value: Int) : NewPlanAction()
     public class SetTargetValue(public val value: Int) : NewPlanAction()
     public object SetAdjustState : NewPlanAction()

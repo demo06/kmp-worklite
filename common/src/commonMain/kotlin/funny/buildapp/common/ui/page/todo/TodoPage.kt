@@ -26,10 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import funny.buildapp.common.ui.page.plan.ScheduleToolBar
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.ui.theme.white
 import funny.buildapp.common.widgets.clickWithoutWave
-import funny.buildapp.common.ui.page.plan.ScheduleToolBar
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
@@ -39,6 +39,7 @@ public fun TodoPage( ) {
     }
     val uiState by viewModel.uiState.collectAsState()
     val todos = uiState.todos
+
     LaunchedEffect(Unit) {
         viewModel.dispatch(TodoAction.Load)
     }

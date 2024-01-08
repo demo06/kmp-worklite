@@ -31,22 +31,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import funny.buildapp.common.data.source.plan.Plan
 import funny.buildapp.common.ui.page.DispatchEvent
-import funny.buildapp.common.ui.route.RouteUtils.back
-import funny.buildapp.common.ui.theme.backgroundGradient
-import funny.buildapp.common.ui.theme.themeColor
-import funny.buildapp.common.ui.theme.transparent
-import funny.buildapp.common.widgets.AppToolsBar
-import funny.buildapp.common.widgets.RoundCard
-import funny.buildapp.common.widgets.SpaceLine
-import funny.buildapp.common.widgets.SwitchButton
+import funny.buildapp.common.ui.page.plan.ProgressCard
 import funny.buildapp.common.ui.page.plan.newPlan.PlanTitle
 import funny.buildapp.common.ui.page.plan.newPlan.TaskItem
+import funny.buildapp.common.ui.route.RouteUtils.back
+import funny.buildapp.common.ui.theme.backgroundGradient
 import funny.buildapp.common.ui.theme.cyan
 import funny.buildapp.common.ui.theme.red
+import funny.buildapp.common.ui.theme.themeColor
+import funny.buildapp.common.ui.theme.transparent
+import funny.buildapp.common.utils.toFraction
+import funny.buildapp.common.widgets.AppToolsBar
 import funny.buildapp.common.widgets.CustomBottomSheet
 import funny.buildapp.common.widgets.FillWidthButton
 import funny.buildapp.common.widgets.MyDatePicker
-import funny.buildapp.common.ui.page.plan.ProgressCard
+import funny.buildapp.common.widgets.RoundCard
+import funny.buildapp.common.widgets.SpaceLine
+import funny.buildapp.common.widgets.SwitchButton
 import kotlinx.datetime.Clock
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
@@ -280,11 +281,10 @@ public fun PlanBottomSheet(
                 )
             }
             items(plans, key = { it.id }) {
-                val percentage = it.initialValue.toDouble() / it.targetValue.toDouble() * 100
+                val percentage = (it.initialValue.toDouble() / it.targetValue.toDouble() * 100).toFraction()
 //                val lastDay = daysBetweenDates(getCurrentDate().dateToString(), it.endDate.dateToString())
                 ProgressCard(
-//                    progress = String.format("%.1f", percentage).toDouble(),
-                    progress =20.0,
+                    progress =percentage,
                     title = it.title,
                     status = when (it.status) {
                         0 -> "未开始"

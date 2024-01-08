@@ -18,11 +18,15 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import funny.buildapp.Database
 import funny.buildapp.common.UIShow
+import funny.buildapp.common.database.DriverFactory
+import funny.buildapp.common.database.database
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        database=Database(DriverFactory(this).createDriver())
         setContent {
             CustomMaterialTheme {
                 UIShow()

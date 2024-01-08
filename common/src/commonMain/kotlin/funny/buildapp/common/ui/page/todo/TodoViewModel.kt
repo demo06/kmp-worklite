@@ -1,14 +1,13 @@
 package funny.buildapp.common.ui.page.todo
 
+import funny.buildapp.common.data.TodoRepository
 import funny.buildapp.common.data.source.daily.Daily
-import funny.buildapp.common.data.source.relation.DailyWithTodo
-import funny.buildapp.common.data.source.todo.Todo
 import funny.buildapp.common.ui.page.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.random.Random
 
 public class TodoViewModel : BaseViewModel<TodoAction>() {
-//private val todoRepo :TodoRepository
+private val todoRepo : TodoRepository = TodoRepository()
     private val _uiState = MutableStateFlow(TodoState())
     public val uiState: MutableStateFlow<TodoState> = _uiState
 
@@ -20,6 +19,12 @@ public class TodoViewModel : BaseViewModel<TodoAction>() {
     }
 
     private fun getDailyTodo() {
+//        todoRepo.getAll()
+//        val a=todoRepo.select()
+//        println(a)
+//        _uiState.setState {
+//            copy(str=a.toString())
+//        }
 //        fetchData(
 //            request = { todoRepo.getTodoFormDaily() },
 //            onSuccess = {
@@ -44,6 +49,7 @@ public class TodoViewModel : BaseViewModel<TodoAction>() {
 }
 
 public data class TodoState(
+    val str:String="",
 //    val todos: List<DailyWithTodo> = emptyList(),
     val todos: List<TestTodo> = emptyList(),
 )

@@ -4,11 +4,13 @@ agp-version = "8.1.4"
 compose-version = "1.5.11"
 precompose-version="1.5.10"
 date-time="0.5.0"
+sqldelight-version="2.0.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp-version" }
 android-library = { id = "com.android.library", version.ref = "agp-version" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight-version" }
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
@@ -17,6 +19,9 @@ androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"
 precompose-base={module="moe.tlaster:precompose",version.ref="precompose-version"}
 precompose-viewmodel={module="moe.tlaster:precompose-viewmodel",version.ref="precompose-version"}
 dateTime={module="org.jetbrains.kotlinx:kotlinx-datetime",version.ref="date-time"}
+sqldelight-native={module="app.cash.sqldelight:native-driver",version.ref="sqldelight-version"}
+sqldelight-android={module="app.cash.sqldelight:android-driver",version.ref="sqldelight-version"}
+sqldelight-jvm={module="app.cash.sqldelight:sqlite-driver",version.ref="sqldelight-version"}
 
 
 

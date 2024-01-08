@@ -191,7 +191,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
         _uiState.setState { copy(todo = _uiState.value.todo.copy(title = title)) }
     }
 
-    private fun setStartDate(time: Long) {
+    private fun setStartDate(date: String) {
 //        _uiState.setState {
 //            copy(
 //                todo = _uiState.value.todo.copy(startDate = time),
@@ -200,7 +200,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
 //        }
     }
 
-    private fun setTargetDate(time: Long) {
+    private fun setTargetDate(date: String) {
 //        _uiState.setState {
 //            copy(
 //                todo = _uiState.value.todo.copy(endDate = time),
@@ -260,8 +260,8 @@ public sealed class CreateScheduleAction {
     public data object GetPlans : CreateScheduleAction()
     public  class GetTodoDetail(public val id: Long) : CreateScheduleAction()
     public  class SetTitle(public val title: String) : CreateScheduleAction()
-    public   class SetStartDate(public val time: Long) : CreateScheduleAction()
-    public  class SetTargetDate(public val time: Long) : CreateScheduleAction()
+    public   class SetStartDate(public val time: String) : CreateScheduleAction()
+    public  class SetTargetDate(public val time: String) : CreateScheduleAction()
     public  data object SetAssociateState : CreateScheduleAction()
     public data object SetIsRepeat : CreateScheduleAction()
     public  class SetPlan(public val id: Long) : CreateScheduleAction()

@@ -36,14 +36,15 @@ import funny.buildapp.common.ui.theme.H3
 import funny.buildapp.common.ui.theme.ToolBarHeight
 import funny.buildapp.common.ui.theme.backgroundGradient
 import funny.buildapp.common.ui.theme.themeColor
+import funny.buildapp.common.utils.daysBetweenDates
+import funny.buildapp.common.utils.toFraction
 import funny.buildapp.common.widgets.clickWithoutWave
-import kotlinx.datetime.Clock
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
 public fun PlanPage(navCtrl: Navigator) {
-    val viewModel: PlanViewModel = viewModel(PlanViewModel::class){
+    val viewModel: PlanViewModel = viewModel(PlanViewModel::class) {
         PlanViewModel()
     }
     val uiState by viewModel.uiState.collectAsState()
@@ -53,32 +54,35 @@ public fun PlanPage(navCtrl: Navigator) {
     }
     LazyColumn(
         Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(bottom = 70.dp)
             .background(backgroundGradient)
     ) {
         item {
             ScheduleToolBar(title = "计划进度")
+//            ScheduleToolBar(title = "2023-01-01".toLocalDate().toEpochDays().toString())
         }
         items(
             items = plans,
             key = { it.id },
             itemContent = {
-                val percentage = it.initialValue.toDouble() / it.targetValue.toDouble() * 100
-//                val lastDay =
-//                    daysBetweenDates(getCurrentDate().dateToString(), it.endDate.dateToString())
-                val lastDay =Clock.System.now().epochSeconds
+                val percentage =
+                    if (it.initialValue.toInt() == 0 || it.targetValue.toInt() == 0) {
+                        0.0
+                    } else {
+                        (it.initialValue.toDouble() / it.targetValue.toDouble() * 100).toFraction()
+                    }
+                val lastDay =
+                    daysBetweenDates(it.endDate, it.startDate)
                 ProgressCard(
-//                    progress = String.format("%.1f", percentage).toDouble(),
-                    progress = 20.00,
-//                    title = it.title,
-                    title = "this is a title ",
+                    progress = percentage,
+                    title = it.title,
                     status = when (1) {
                         0 -> "未开始"
                         1 -> "进行中"
                         2 -> "已完成"
                         else -> "未知"
                     },
-                    lastDay = lastDay,
+                    lastDay = lastDay.toLong(),
                     proportion = "${it.initialValue}/${it.targetValue}",
                     onClick = { RouteUtils.navTo(navCtrl, Route.PLAN_DETAIL, it.id) }
                 )

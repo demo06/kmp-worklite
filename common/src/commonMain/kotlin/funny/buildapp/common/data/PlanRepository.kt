@@ -1,15 +1,28 @@
-//package funny.buildapp.progress.data
-//
-//import funny.buildapp.common.data.source.plan.Plan
-//import funny.buildapp.progress.data.source.plan.PlanDao
-//import javax.inject.Inject
-//import javax.inject.Singleton
-//
-////@Singleton
-//public class PlanRepository @Inject constructor(private val planDao: PlanDao) {
-//    suspend fun getAll(): List<Plan> = planDao.getAll()
-//    suspend fun findPlanById(planId: Int) = planDao.loadAllById(planId)
-//    suspend fun getPlanDetail(planId: Long): Plan = planDao.getPlanDetail(planId)
-//    suspend fun upsert(plan: Plan): Long = planDao.upsertPlan(plan)
-//    suspend fun delete(id: Long): Int = planDao.delete(Plan(id = id))
-//}
+package funny.buildapp.common.data
+
+import funny.buildapp.Plans
+import funny.buildapp.common.database.database
+
+public class PlanRepository {
+
+    public fun insert(plan: Plans): Unit = database.planQueries.insert(plan)
+
+    public fun delete(id: Long): Unit = database.planQueries.delete(id)
+
+    public fun update(plan: Plans): Unit = database.planQueries.update(
+        title = plan.title,
+        startDate = plan.startDate,
+        endDate = plan.endDate,
+        initialValue = plan.initialValue,
+        targetValue = plan.targetValue,
+        autoAdjust = plan.autoAdjust,
+        state = plan.state,
+        id = plan.id
+    )
+
+    public fun selectAll(): List<Plans> = database.planQueries.selectALL().executeAsList()
+    public fun selectById(id: Long): Plans =
+        database.planQueries.selectById(id).executeAsOne()
+
+
+}

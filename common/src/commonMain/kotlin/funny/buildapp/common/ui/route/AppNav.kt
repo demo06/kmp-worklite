@@ -13,13 +13,12 @@ import moe.tlaster.precompose.navigation.path
 
 @Composable
 public fun AppNav(navCtrl: Navigator) {
-//    val navigator = rememberNavigator()
     NavHost(
         navigator = navCtrl,
-        initialRoute = Route.HOME
+        initialRoute = Route.HOME,
     ) {
         //home
-        scene(route = Route.HOME) {
+        scene(route = Route.HOME,/*navTransition= NavTransition(createTransition = fadeIn())*/) {
             PlanPage(navCtrl)
         }
         //new task
