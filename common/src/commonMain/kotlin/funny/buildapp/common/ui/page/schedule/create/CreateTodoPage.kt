@@ -118,39 +118,53 @@ public fun CreateTodoPage(
                 RoundCard {
                     TaskItem(
                         "执行时间",
-                        if (todo.repeatable == true && todo.planId !=0L) plan.startDate
+                        if (todo.repeatable == true && todo.planId != 0L) plan.startDate
                         else uiState.startTime
                     ) {
-                        if (todo.repeatable==false) {
+                        if (todo.repeatable == false) {
                             dialogState = 0
                             openDialog = !openDialog
                         } else {
-                            viewModel.dispatch(CreateScheduleAction.SendEvent(DispatchEvent.ShowToast("已关联计划时间不能修改")))
+                            viewModel.dispatch(
+                                CreateScheduleAction.SendEvent(
+                                    DispatchEvent.ShowToast(
+                                        "已关联计划时间不能修改"
+                                    )
+                                )
+                            )
                         }
 
                     }
                     SpaceLine()
                     TaskItem(
                         "结束时间",
-                        if (todo.repeatable == true && todo.planId!=0L) plan.endDate
+                        if (todo.repeatable == true && todo.planId != 0L) plan.endDate
                         else uiState.endTime
                     ) {
-                        if (todo.repeatable==false) {
+                        if (todo.repeatable == false) {
                             dialogState = 1
                             openDialog = !openDialog
                         } else {
-                            viewModel.dispatch(CreateScheduleAction.SendEvent(DispatchEvent.ShowToast("已关联计划时间不能修改")))
+                            viewModel.dispatch(
+                                CreateScheduleAction.SendEvent(
+                                    DispatchEvent.ShowToast(
+                                        "已关联计划时间不能修改"
+                                    )
+                                )
+                            )
                         }
                     }
                     SpaceLine()
-                    TaskItem("关联计划", content = {
-                        SwitchButton(
-                            modifier = Modifier.height(25.dp),
-                            checked = todo.planId!=0L,
-                            onCheckedChange = {
-                                viewModel.dispatch(CreateScheduleAction.SetAssociateState(it))
-                            })
-                    })
+                    TaskItem(
+                        title = "关联计划",
+                        content = {
+                            SwitchButton(
+                                modifier = Modifier.height(25.dp),
+                                checked = uiState.isRelated,
+                                onCheckedChange = {
+                                    viewModel.dispatch(CreateScheduleAction.SetAssociateState())
+                                })
+                        })
                 }
             }
             item {
@@ -161,7 +175,7 @@ public fun CreateTodoPage(
                         (plan.targetValue.toDouble() / plan.targetValue.toDouble() * 100).toFraction()
                     }
                 Column {
-                    AnimatedVisibility(visible = todo.planId!=0L) {
+                    AnimatedVisibility(visible = uiState.isRelated) {
                         Column {
                             if (plan.id.toInt() != 0) {
                                 RoundCard {
@@ -183,7 +197,7 @@ public fun CreateTodoPage(
                                     TaskItem("是否在计划内重复", content = {
                                         SwitchButton(
                                             modifier = Modifier.height(25.dp),
-                                            checked = todo.repeatable==true,
+                                            checked = todo.repeatable == true,
                                             onCheckedChange = {
                                                 viewModel.dispatch(
                                                     CreateScheduleAction.SetIsRepeat

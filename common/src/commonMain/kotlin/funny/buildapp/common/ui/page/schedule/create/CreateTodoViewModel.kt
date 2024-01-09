@@ -27,7 +27,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
             is CreateScheduleAction.Delete -> delete()
             is CreateScheduleAction.SetStartDate -> setStartDate(action.time)
             is CreateScheduleAction.SetTargetDate -> setTargetDate(action.time)
-            is CreateScheduleAction.SetAssociateState -> setAssociateState(action.flag)
+            is CreateScheduleAction.SetAssociateState -> setAssociateState()
             is CreateScheduleAction.SetIsRepeat -> setIsRepeat()
             is CreateScheduleAction.SetPlan -> setPlan(action.id)
             is CreateScheduleAction.SetTitle -> setTitle(action.title)
@@ -93,12 +93,10 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
         } else if (_uiState.value.todo.startDate > _uiState.value.todo.endDate) {
             "结束时间不能早于开始时间".toast()
             false
-        }
-//        else if (_uiState.value.plan.id.toInt() == 0) {
-//            "请选择相关联的计划".toast()
-//            false
-//        }
-        else {
+        } else if (_uiState.value.todo.planId != 0L && _uiState.value.plan.id.toInt() == 0) {
+            "请选择相关联的计划".toast()
+            false
+        } else {
             true
         }
     }
@@ -142,7 +140,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
     private fun increaseTodoCount() {
         fetchData(
             request = {
-                if (_uiState.value.todo.planId!=0L) {
+                if (_uiState.value.todo.planId != 0L) {
                     planRepo.update(_uiState.value.plan.copy(targetValue = _uiState.value.plan.targetValue + 1))
                 } else {
                     if (_uiState.value.todo.repeatable == true) {// if it's repeatable
@@ -166,11 +164,11 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
     }
 
     private fun subtractTodoCount() {
-        if (_uiState.value.todo.planId==0L) return
+        if (_uiState.value.todo.planId == 0L) return
         if (_uiState.value.plan.targetValue == 0L) return
         fetchData(
             request = {
-                if (_uiState.value.todo.repeatable==true) {// if it's repeatable
+                if (_uiState.value.todo.repeatable == true) {// if it's repeatable
                     val days =
                         calculateDaysBetweenTwoLongs(
                             startTime = _uiState.value.plan.startDate.dateToTimeStamp(),
@@ -210,23 +208,11 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
         }
     }
 
-    private fun setAssociateState(flag: Boolean) {
-        if (!flag){
-            _uiState.setState {
-                copy(
-                    todo = _uiState.value.todo.copy(planId = 0),
-                    plan =  Plans(
-                        id = 0,
-                        title = "",
-                        startDate = currentDate(),
-                        endDate = currentDate(),
-                        initialValue = 0,
-                        targetValue = 100,
-                        autoAdjust = false,
-                        state = 0
-                    ),
-                )
-            }
+    private fun setAssociateState() {
+        _uiState.setState {
+            copy(
+                isRelated=!_uiState.value.isRelated,
+            )
         }
         setIsRepeat()
     }
@@ -256,6 +242,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
 
 
 public data class CreateScheduleState(
+    val isRelated:Boolean=false,
     val planBottomSheet: Boolean = false,
     val startTime: String = currentDate(),
     val endTime: String = currentDate(),
@@ -291,7 +278,7 @@ public sealed class CreateScheduleAction {
     public class SetTitle(public val title: String) : CreateScheduleAction()
     public class SetStartDate(public val time: String) : CreateScheduleAction()
     public class SetTargetDate(public val time: String) : CreateScheduleAction()
-    public class SetAssociateState(public val flag:Boolean) : CreateScheduleAction()
+    public class SetAssociateState() : CreateScheduleAction()
     public data object SetIsRepeat : CreateScheduleAction()
     public class SetPlan(public val id: Long) : CreateScheduleAction()
 }
