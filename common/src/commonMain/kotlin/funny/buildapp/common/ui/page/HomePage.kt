@@ -30,24 +30,15 @@ public fun HomePage() {
         modifier = Modifier.background(backgroundGradient)
             .systemBarsPadding(),
         floatingActionButton = {
-            if (currentDestination == Route.HOME || currentDestination == Route.TODO|| currentDestination == Route.SCHEDULE) {
+            if (currentDestination == Route.HOME || currentDestination == Route.TODO || currentDestination == Route.SCHEDULE) {
                 FloatingActionButton(
                     containerColor = themeColor,
                     onClick = {
                         when (currentDestination) {
-                            Route.HOME -> {
-                                RouteUtils.navTo(navCtrl, Route.NEW_PLAN, 0)
-                            }
-
-                            Route.TODO -> {
-                                RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)
-                            }
-
-                            Route.SCHEDULE -> {
-                                RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 1)
-                            }
+                            Route.HOME -> RouteUtils.navTo(navCtrl, Route.NEW_PLAN, 0)
+                            Route.TODO -> RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)
+                            Route.SCHEDULE -> RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)
                         }
-
                     }
                 ) {
                     Icon(
