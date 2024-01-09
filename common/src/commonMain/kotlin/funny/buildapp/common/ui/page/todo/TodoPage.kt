@@ -51,24 +51,19 @@ public fun TodoPage( ) {
         item {
             ScheduleToolBar(title = "今日待办")
         }
-//        items(items = todos.filter { !it.daily.state }, key = { it.daily.id }) {
-//            TodoItem(title = it.todo.title, selected = it.daily.state,
-//                onClick = { viewModel.dispatch(TodoAction.UpTodayTask(it.daily)) }
-//            )
-//        }
-        items(items = todos.filter { !it.state }) {
-            TodoItem(title = it.title, selected = it.state,
-//                onClick = { viewModel.dispatch(TodoAction.UpTodayTask(it.daily)) }
+        items(items = todos.filter { it.state==0L }, key = { it.id }) {
+            TodoItem(title = it.title, selected =false,
+                onClick = { viewModel.dispatch(TodoAction.UpTodayTask(it.copy(state = 1))) }
             )
         }
-        if (todos.any { it.state }) {
+        if (todos.any { it.state==1L }) {
             item {
                 Label()
             }
         }
-        items(items = todos.filter { it.state }) {
-            TodoItem(title = it.title, selected = it.state,
-//                onClick = { viewModel.dispatch(TodoAction.UpTodayTask(it.daily)) }
+        items(items = todos.filter { it.state==1L }) {
+            TodoItem(title = it.title, selected = true,
+                onClick = { viewModel.dispatch(TodoAction.UpTodayTask(it.copy(state = 0))) }
             )
         }
     }

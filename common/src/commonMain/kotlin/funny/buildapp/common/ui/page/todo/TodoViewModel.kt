@@ -1,65 +1,57 @@
 package funny.buildapp.common.ui.page.todo
 
+import funny.buildapp.Todos
 import funny.buildapp.common.data.TodoRepository
-import funny.buildapp.common.data.source.daily.Daily
 import funny.buildapp.common.ui.page.BaseViewModel
+import funny.buildapp.common.utils.currentDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.random.Random
 
 public class TodoViewModel : BaseViewModel<TodoAction>() {
-private val todoRepo : TodoRepository = TodoRepository()
+    private val todoRepo: TodoRepository by lazy { TodoRepository() }
     private val _uiState = MutableStateFlow(TodoState())
     public val uiState: MutableStateFlow<TodoState> = _uiState
 
     override fun dispatch(action: TodoAction) {
         when (action) {
             is TodoAction.Load -> getDailyTodo()
-            is TodoAction.UpTodayTask -> upsertDaily(action.daily)
+            is TodoAction.UpTodayTask -> updateTodo(action.todo)
         }
     }
 
     private fun getDailyTodo() {
-//        todoRepo.getAll()
-//        val a=todoRepo.select()
-//        println(a)
-//        _uiState.setState {
-//            copy(str=a.toString())
-//        }
-//        fetchData(
-//            request = { todoRepo.getTodoFormDaily() },
-//            onSuccess = {
-//                _uiState.setState {
-//                    copy(todos = it)
-//                }
-//            }
-//        )
-        _uiState.setState {
-            copy(todos = listOf(TestTodo(),TestTodo(),TestTodo(),TestTodo(),TestTodo(),))
-        }
+        fetchData(
+            request = { todoRepo.selectByDate(currentDate(), currentDate()) },
+            onSuccess = {
+                _uiState.setState {
+                    copy(todos = it)
+                }
+            }
+        )
     }
 
-    private fun upsertDaily(daily: Daily) {
-//        fetchData(
-//            request = { todoRepo.upsertDaily(daily.copy(state = !daily.state)) },
-//            onSuccess = {
-//                getDailyTodo()
-//            }
-//        )
+    private fun updateTodo(todo: Todos) {
+        fetchData(
+            request = { todoRepo.update(todo) },
+            onSuccess = {
+                getDailyTodo()
+            }
+        )
     }
 }
 
 public data class TodoState(
-    val str:String="",
-//    val todos: List<DailyWithTodo> = emptyList(),
-    val todos: List<TestTodo> = emptyList(),
+    val str: String = "",
+    val todos: List<Todos> = emptyList(),
 )
 
 public data class TestTodo(
-    val title:String="this is a todo ",
-    val state:Boolean= Random(1).nextBoolean(),
+    val title: String = "this is a todo ",
+    val state: Boolean = Random(1).nextBoolean(),
 )
+
 public sealed class TodoAction {
 
     public data object Load : TodoAction()
-    public class UpTodayTask(public val daily: Daily) : TodoAction()
+    public class UpTodayTask(public val todo: Todos) : TodoAction()
 }
