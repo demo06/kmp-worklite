@@ -26,28 +26,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import funny.buildapp.common.data.source.todo.Todo
+import funny.buildapp.Todos
 import funny.buildapp.common.ui.route.Route
 import funny.buildapp.common.ui.route.RouteUtils
 import funny.buildapp.common.ui.theme.backgroundColor
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.ui.theme.white
-import moe.tlaster.precompose.navigation.NavOptions
+import funny.buildapp.common.utils.currentDate
+import funny.buildapp.common.utils.timeStampToDate
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun SchedulePage(navCtrl: Navigator) {
-    val viewModel: ScheduleViewModel = viewModel(ScheduleViewModel::class) {
-        ScheduleViewModel()
-    }
+    val viewModel = viewModel(ScheduleViewModel::class) { ScheduleViewModel() }
     val datePickerState = rememberDatePickerState()
     val uiState by viewModel.uiState.collectAsState()
     val todos = uiState.todos
     LaunchedEffect(datePickerState) {
         snapshotFlow { datePickerState.selectedDateMillis }.collect {
-//            viewModel.dispatch(ScheduleAction.GetScheduleList(datePickerState.selectedDateMillis ?: getCurrentDate()))
+            viewModel.dispatch(
+                ScheduleAction.GetScheduleList(
+                    it?.timeStampToDate() ?: currentDate()
+                )
+            )
         }
     }
     Box(
@@ -92,7 +95,7 @@ public fun DatePane(datePickerState: DatePickerState) {
 
 
 @Composable
-public fun ScheduleCard(todos: List<Todo>, onItemClick: (Long) -> Unit) {
+public fun ScheduleCard(todos: List<Todos>, onItemClick: (Long) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .background(white)

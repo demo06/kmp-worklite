@@ -57,9 +57,7 @@ import kotlin.math.abs
 
 @Composable
 public fun PlanDetailPage(navCtrl: Navigator, id: Int = 0) {
-    val viewModel: PlanDetailViewModel = viewModel(PlanDetailViewModel::class) {
-        PlanDetailViewModel()
-    }
+    val viewModel = viewModel(PlanDetailViewModel::class) { PlanDetailViewModel() }
     val uiState by viewModel.uiState.collectAsState()
     val plan = uiState.plan
     val todos = uiState.todos
@@ -91,7 +89,7 @@ public fun PlanDetailPage(navCtrl: Navigator, id: Int = 0) {
                 progress = percentage,
                 proportion = "${plan.initialValue}/${plan.targetValue}",
                 surplus = lastDay.toLong(),
-                delay = daysBetweenDates(plan.endDate,currentDate()).toLong()
+                delay = daysBetweenDates(plan.endDate, currentDate()).toLong()
             )
             Schedule(todos, noDataClick = {
                 RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)

@@ -6,8 +6,8 @@ import funny.buildapp.common.ui.page.BaseViewModel
 import funny.buildapp.common.ui.page.DispatchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 
-public class PlanViewModel:    BaseViewModel<PlanAction>() {
-    private val repo: PlanRepository by lazy { PlanRepository() }
+public class PlanViewModel : BaseViewModel<PlanAction>() {
+    private val repo by lazy { PlanRepository() }
     private val _uiState = MutableStateFlow(PlanUiState())
     public val uiState: MutableStateFlow<PlanUiState> = _uiState
 

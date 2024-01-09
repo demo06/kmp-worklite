@@ -57,13 +57,8 @@ import moe.tlaster.precompose.viewmodel.viewModel
 
 
 @Composable
-public fun CreateTodoPage(
-    navCtrl: Navigator,
-    id: Int = 0
-) {
-    val viewModel: CreateScheduleViewModel = viewModel(CreateScheduleViewModel::class) {
-        CreateScheduleViewModel()
-    }
+public fun CreateTodoPage(navCtrl: Navigator, id: Int = 0) {
+    val viewModel = viewModel(CreateScheduleViewModel::class) { CreateScheduleViewModel() }
     val uiState by viewModel.uiState.collectAsState()
     val plan = uiState.plan
     val todo = uiState.todo

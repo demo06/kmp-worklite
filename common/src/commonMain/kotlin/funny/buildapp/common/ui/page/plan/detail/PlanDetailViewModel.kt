@@ -9,8 +9,8 @@ import funny.buildapp.common.utils.currentDate
 import kotlinx.coroutines.flow.MutableStateFlow
 
 public class PlanDetailViewModel : BaseViewModel<PlanDetailAction>() {
-    private val planRepo: PlanRepository by lazy { PlanRepository() }
-    private val todoRepo: TodoRepository by lazy { TodoRepository() }
+    private val planRepo by lazy { PlanRepository() }
+    private val todoRepo by lazy { TodoRepository() }
     private val _uiState = MutableStateFlow(PlanDetailState())
     public val uiState: MutableStateFlow<PlanDetailState> = _uiState
 
@@ -34,9 +34,11 @@ public class PlanDetailViewModel : BaseViewModel<PlanDetailAction>() {
     private fun getTodos(id: Int) {
         fetchData(
             request = { todoRepo.selectByPlanId(id.toLong()) },
-            onSuccess = { _uiState.setState {
-                copy(todos = it)
-            } }
+            onSuccess = {
+                _uiState.setState {
+                    copy(todos = it)
+                }
+            }
         )
     }
 

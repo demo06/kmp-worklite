@@ -11,8 +11,8 @@ import funny.buildapp.common.utils.daysBetweenDates
 import kotlinx.coroutines.flow.MutableStateFlow
 
 public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
-    private val repo: TodoRepository by lazy { TodoRepository() }
-    private val planRepo: PlanRepository by lazy { PlanRepository() }
+    private val repo by lazy { TodoRepository() }
+    private val planRepo by lazy { PlanRepository() }
     private val _uiState = MutableStateFlow(CreateScheduleState())
     public val uiState: MutableStateFlow<CreateScheduleState> = _uiState
 

@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.toLocalDate
 
 public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
-    private val repo: PlanRepository by lazy { PlanRepository() }
-
+    private val repo by lazy { PlanRepository() }
     private val _uiState = MutableStateFlow(NewPlanUiState())
     public val uiState: MutableStateFlow<NewPlanUiState> = _uiState
 
@@ -32,13 +31,19 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
 
 
     private fun getPlanDetail(id: Int) {
-        val plan = repo.selectById(id.toLong())
-        _uiState.setState {
-            copy(
-                plan = plan,
-                datePickerDialog = false
-            )
-        }
+        fetchData(
+            request = { repo.selectById(id.toLong()) },
+            onSuccess = {
+                _uiState.setState {
+                    copy(
+                        plan = it,
+                        datePickerDialog = false
+                    )
+                }
+            },
+            onFailed = { _event.sendEvent(DispatchEvent.ShowToast(it)) }
+        )
+
     }
 
 
@@ -59,13 +64,19 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
 
     private fun savePlan() {
         if (!checkParams()) return
-        repo.insert(_uiState.value.plan)
-        _event.sendEvent(DispatchEvent.Back)
+        fetchData(
+            request = { repo.insert(_uiState.value.plan) },
+            onSuccess = { _event.sendEvent(DispatchEvent.Back) },
+            onFailed = { _event.sendEvent(DispatchEvent.ShowToast(it)) }
+        )
     }
 
     private fun deletePlan() {
-        repo.delete(_uiState.value.plan.id)
-        _event.sendEvent(DispatchEvent.Back)
+        fetchData(
+            request = { repo.delete(_uiState.value.plan.id) },
+            onSuccess = { _event.sendEvent(DispatchEvent.Back) },
+            onFailed = { _event.sendEvent(DispatchEvent.ShowToast(it)) }
+        )
     }
 
     private fun setTitle(title: String) {

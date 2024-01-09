@@ -60,15 +60,8 @@ import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
-public fun NewPlanPage(
-    navCtrl: Navigator,
-    id: Int = 0,
-    isEditMode: Boolean = false,
-    onDismiss: (() -> Unit)? = null
-) {
-    val viewModel: NewPlanViewModel = viewModel(NewPlanViewModel::class) {
-        NewPlanViewModel()
-    }
+public fun NewPlanPage(navCtrl: Navigator, id: Int = 0, isEditMode: Boolean = false, onDismiss: (() -> Unit)? = null) {
+    val viewModel = viewModel(NewPlanViewModel::class) { NewPlanViewModel() }
     val uiState by viewModel.uiState.collectAsState()
     val plan = uiState.plan
     val snackState = remember { SnackbarHostState() }
@@ -79,7 +72,6 @@ public fun NewPlanPage(
             when (it) {
                 is DispatchEvent.ShowToast -> snackState.showSnackbar(it.msg)
                 is DispatchEvent.Back -> navCtrl.back()
-                else -> {}
             }
         }
     }

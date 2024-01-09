@@ -46,9 +46,7 @@ import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
 public fun PlanPage(navCtrl: Navigator) {
-    val viewModel: PlanViewModel = viewModel(PlanViewModel::class) {
-        PlanViewModel()
-    }
+    val viewModel = viewModel(PlanViewModel::class) { PlanViewModel() }
     val uiState by viewModel.uiState.collectAsState()
     val plans = uiState.plans
     LaunchedEffect(Unit) {
