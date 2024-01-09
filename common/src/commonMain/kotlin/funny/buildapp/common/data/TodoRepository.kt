@@ -19,6 +19,7 @@ public class TodoRepository {
     )
 
     public fun selectById(id: Long): Todos = database.todoQueries.selectById(id).executeAsOne()
+    public fun selectByPlanId(id: Long): List<Todos> = database.todoQueries.selectByPlanId(id).executeAsList()
 
     public fun selectByDate(startDate:String,endDate:String):List<Todos> = database.todoQueries.selectByDate(startDate,endDate).executeAsList()
 

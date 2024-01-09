@@ -6,9 +6,8 @@ import funny.buildapp.common.data.PlanRepository
 import funny.buildapp.common.data.TodoRepository
 import funny.buildapp.common.ui.page.BaseViewModel
 import funny.buildapp.common.ui.page.DispatchEvent
-import funny.buildapp.common.utils.calculateDaysBetweenTwoLongs
 import funny.buildapp.common.utils.currentDate
-import funny.buildapp.common.utils.dateToTimeStamp
+import funny.buildapp.common.utils.daysBetweenDates
 import kotlinx.coroutines.flow.MutableStateFlow
 
 public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
@@ -144,11 +143,10 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
                     planRepo.update(_uiState.value.plan.copy(targetValue = _uiState.value.plan.targetValue + 1))
                 } else {
                     if (_uiState.value.todo.repeatable == true) {// if it's repeatable
-                        val days =
-                            calculateDaysBetweenTwoLongs(
-                                startTime = _uiState.value.plan.startDate.dateToTimeStamp(),
-                                endTime = _uiState.value.plan.endDate.dateToTimeStamp()
-                            )
+                        val days = daysBetweenDates(
+                            endDate = _uiState.value.plan.endDate,
+                            startDate = _uiState.value.plan.startDate
+                        )
                         val targetValue = (_uiState.value.plan.targetValue + days)
                         planRepo.update(_uiState.value.plan.copy(targetValue = targetValue))
                     } else {
@@ -169,11 +167,10 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
         fetchData(
             request = {
                 if (_uiState.value.todo.repeatable == true) {// if it's repeatable
-                    val days =
-                        calculateDaysBetweenTwoLongs(
-                            startTime = _uiState.value.plan.startDate.dateToTimeStamp(),
-                            endTime = _uiState.value.plan.endDate.dateToTimeStamp()
-                        )
+                    val days = daysBetweenDates(
+                        endDate = _uiState.value.plan.endDate,
+                        startDate = _uiState.value.plan.startDate
+                    )
                     val targetValue = (_uiState.value.plan.targetValue - days).toInt()
                     planRepo.update(_uiState.value.plan.copy(targetValue = targetValue.toLong()))
                 } else {
@@ -211,7 +208,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
     private fun setAssociateState() {
         _uiState.setState {
             copy(
-                isRelated=!_uiState.value.isRelated,
+                isRelated = !_uiState.value.isRelated,
             )
         }
         setIsRepeat()
@@ -242,7 +239,7 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
 
 
 public data class CreateScheduleState(
-    val isRelated:Boolean=false,
+    val isRelated: Boolean = false,
     val planBottomSheet: Boolean = false,
     val startTime: String = currentDate(),
     val endTime: String = currentDate(),

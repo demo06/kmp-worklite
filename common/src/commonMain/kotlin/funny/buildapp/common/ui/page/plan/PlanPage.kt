@@ -37,6 +37,7 @@ import funny.buildapp.common.ui.theme.H3
 import funny.buildapp.common.ui.theme.ToolBarHeight
 import funny.buildapp.common.ui.theme.backgroundGradient
 import funny.buildapp.common.ui.theme.themeColor
+import funny.buildapp.common.utils.currentDate
 import funny.buildapp.common.utils.daysBetweenDates
 import funny.buildapp.common.utils.toFraction
 import funny.buildapp.common.widgets.clickWithoutWave
@@ -66,13 +67,13 @@ public fun PlanPage(navCtrl: Navigator) {
             key = { it.id },
             itemContent = {
                 val percentage =
-                    if (it.initialValue.toInt() == 0 || it.targetValue.toInt() == 0) {
+                    if (it.initialValue == 0L || it.targetValue == 0L) {
                         0.0
                     } else {
                         (it.initialValue.toDouble() / it.targetValue.toDouble() * 100).toFraction()
                     }
                 val lastDay =
-                    daysBetweenDates(it.endDate, it.startDate)
+                    daysBetweenDates(it.endDate, currentDate())
                 ProgressCard(
                     progress = percentage,
                     title = it.title,

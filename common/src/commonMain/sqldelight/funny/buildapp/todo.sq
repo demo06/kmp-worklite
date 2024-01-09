@@ -23,5 +23,8 @@ UPDATE todos SET title=?,startDate=?,endDate=?,planId=?,repeatable=?,state=? WHE
 selectById:
 SELECT * FROM todos WHERE id=?;
 
+selectByPlanId:
+SELECT * FROM todos WHERE planId=?;
+
 selectByDate:
 SELECT * FROM todos WHERE startDate>=? AND endDate<=?;

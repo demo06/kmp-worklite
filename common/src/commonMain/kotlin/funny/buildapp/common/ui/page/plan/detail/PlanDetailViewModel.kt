@@ -1,15 +1,16 @@
 package funny.buildapp.common.ui.page.plan.detail
 
-import funny.buildapp.common.data.source.plan.Plan
-import funny.buildapp.common.data.source.todo.Todo
+import funny.buildapp.Plans
+import funny.buildapp.Todos
+import funny.buildapp.common.data.PlanRepository
+import funny.buildapp.common.data.TodoRepository
 import funny.buildapp.common.ui.page.BaseViewModel
+import funny.buildapp.common.utils.currentDate
 import kotlinx.coroutines.flow.MutableStateFlow
 
-public class PlanDetailViewModel(
-) : BaseViewModel<PlanDetailAction>() {
-
-//    private val repo: PlanRepository,
-//    private val todoRepo: TodoRepository
+public class PlanDetailViewModel : BaseViewModel<PlanDetailAction>() {
+    private val planRepo: PlanRepository by lazy { PlanRepository() }
+    private val todoRepo: TodoRepository by lazy { TodoRepository() }
     private val _uiState = MutableStateFlow(PlanDetailState())
     public val uiState: MutableStateFlow<PlanDetailState> = _uiState
 
@@ -21,30 +22,39 @@ public class PlanDetailViewModel(
     }
 
     private fun getPlanDetail(id: Int) {
-//        fetchData(
-//            request = { repo.getPlanDetail(id.toLong()) },
-//            onSuccess = {
-//                _uiState.setState { copy(plan = it) }
-//                dispatch(PlanDetailAction.GetTodos(id))
-//            }
-//        )
+        fetchData(
+            request = { planRepo.selectById(id.toLong()) },
+            onSuccess = {
+                _uiState.setState { copy(plan = it) }
+                dispatch(PlanDetailAction.GetTodos(id))
+            }
+        )
     }
 
     private fun getTodos(id: Int) {
-//        fetchData(
-//            request = { todoRepo.getTodoByPlanId(id) },
-//            onSuccess = { _uiState.setState {
-//                copy(todos = it)
-//            } }
-//        )
+        fetchData(
+            request = { todoRepo.selectByPlanId(id.toLong()) },
+            onSuccess = { _uiState.setState {
+                copy(todos = it)
+            } }
+        )
     }
 
 
 }
 
 public data class PlanDetailState(
-    val plan: Plan = Plan(0),
-    val todos: List<Todo> = emptyList(),
+    val plan: Plans = Plans(
+        id = 0,
+        title = "",
+        startDate = currentDate(),
+        endDate = currentDate(),
+        initialValue = 0,
+        targetValue = 100,
+        autoAdjust = false,
+        state = 0
+    ),
+    val todos: List<Todos> = emptyList(),
 )
 
 public sealed class PlanDetailAction {

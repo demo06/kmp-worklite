@@ -33,20 +33,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import funny.buildapp.common.data.source.todo.Todo
+import funny.buildapp.Todos
 import funny.buildapp.common.ui.page.plan.newPlan.NewPlanPage
 import funny.buildapp.common.ui.page.todo.TodoItem
 import funny.buildapp.common.ui.route.Route
 import funny.buildapp.common.ui.route.RouteUtils
 import funny.buildapp.common.ui.route.RouteUtils.back
 import funny.buildapp.common.ui.theme.black
+import funny.buildapp.common.ui.theme.grey1
 import funny.buildapp.common.ui.theme.red2
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.ui.theme.transparent
 import funny.buildapp.common.ui.theme.white
+import funny.buildapp.common.utils.currentDate
+import funny.buildapp.common.utils.daysBetweenDates
+import funny.buildapp.common.utils.toFraction
 import funny.buildapp.common.widgets.AppToolsBar
 import funny.buildapp.common.widgets.CustomBottomSheet
-import kotlinx.datetime.Clock
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 import kotlin.math.abs
@@ -77,26 +80,18 @@ public fun PlanDetailPage(navCtrl: Navigator, id: Int = 0) {
                 onBack = { navCtrl.back() },
                 onRightClick = { bottomSheet = !bottomSheet }
             )
-            val percentage = plan.initialValue.toDouble() / plan.targetValue.toDouble() * 100
-            val progress = 20.00
-//                if (percentage.isNaN()) 0.00 else String.format("%.1f", percentage).toDouble()
-            val lastDay = Clock.System.now().epochSeconds
-//                daysBetweenDates(getCurrentDate().dateToString(), plan.endDate.dateToString())
+            val percentage =
+                if (plan.initialValue == 0L || plan.targetValue == 0L) 0.0
+                else (plan.initialValue.toDouble() / plan.targetValue.toDouble() * 100).toFraction()
+            val lastDay = daysBetweenDates(currentDate(), plan.endDate)
             DetailContent(
-//                title = plan.title,
-                title = "this is a plant",
-                startTime = "2024-1-1",
-                endTime = "2024-12-1",
-                progress = progress,
+                title = plan.title,
+                startTime = plan.startDate,
+                endTime = plan.endDate,
+                progress = percentage,
                 proportion = "${plan.initialValue}/${plan.targetValue}",
-                surplus = "${
-//                    daysBetweenDates(
-//                        getCurrentDate().dateToString(),
-//                        plan.endDate.dateToString()
-//                    ) 
-                    10
-                }",
-                delay = lastDay
+                surplus = lastDay.toLong(),
+                delay = daysBetweenDates(plan.endDate,currentDate()).toLong()
             )
             Schedule(todos, noDataClick = {
                 RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)
@@ -125,7 +120,7 @@ public fun DetailContent(
     endTime: String,
     progress: Double = 0.00,
     proportion: String,
-    surplus: String,
+    surplus: Long,
     delay: Long
 ) {
     LazyColumn(
@@ -146,11 +141,11 @@ public fun DetailContent(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "从 $startTime  ",
-                    color = white,
+                    color = grey1,
                 )
                 Text(
                     text = "到 $endTime",
-                    color = white,
+                    color = grey1,
                 )
             }
         }
@@ -164,14 +159,14 @@ public fun DetailContent(
                     append("天")
                 } else {
                     withStyle(style = SpanStyle(color = red2)) {
-                        append(surplus)
+                        append(abs(surplus).toString())
                     }
                     append("天后结束  ")
                 }
             }
             Text(
                 text = text,
-                color = white,
+                color = grey1,
             )
         }
 
@@ -213,7 +208,7 @@ public fun DetailContent(
 }
 
 @Composable
-public fun Schedule(todos: List<Todo>, noDataClick: (() -> Unit?)? = null) {
+public fun Schedule(todos: List<Todos>, noDataClick: (() -> Unit?)? = null) {
     if (todos.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier
@@ -224,10 +219,10 @@ public fun Schedule(todos: List<Todo>, noDataClick: (() -> Unit?)? = null) {
                 key = { it.id },
                 itemContent = {
                     TodoItem(
-                        selected = it.status == 1,
+                        selected = it.state == 1L,
                         title = it.title,
                         showIcon = false,
-                        isRepeatable = it.repeatable,
+                        isRepeatable = it.repeatable == true,
                     )
                 }
             )
