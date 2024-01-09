@@ -53,13 +53,11 @@ import kotlin.math.abs
 
 
 @Composable
-public fun PlanDetailPage(navCtrl: Navigator) {
+public fun PlanDetailPage(navCtrl: Navigator, id: Int = 0) {
     val viewModel: PlanDetailViewModel = viewModel(PlanDetailViewModel::class) {
         PlanDetailViewModel()
     }
     val uiState by viewModel.uiState.collectAsState()
-//    val id = navBackStackEntry?.arguments?.getInt("id") ?: 0
-    val id =  0
     val plan = uiState.plan
     val todos = uiState.todos
     var bottomSheet by remember { mutableStateOf(false) }
@@ -80,14 +78,14 @@ public fun PlanDetailPage(navCtrl: Navigator) {
                 onRightClick = { bottomSheet = !bottomSheet }
             )
             val percentage = plan.initialValue.toDouble() / plan.targetValue.toDouble() * 100
-            val progress =20.00
+            val progress = 20.00
 //                if (percentage.isNaN()) 0.00 else String.format("%.1f", percentage).toDouble()
-            val lastDay =Clock.System.now().epochSeconds
+            val lastDay = Clock.System.now().epochSeconds
 //                daysBetweenDates(getCurrentDate().dateToString(), plan.endDate.dateToString())
             DetailContent(
 //                title = plan.title,
                 title = "this is a plant",
-                startTime ="2024-1-1",
+                startTime = "2024-1-1",
                 endTime = "2024-12-1",
                 progress = progress,
                 proportion = "${plan.initialValue}/${plan.targetValue}",
@@ -96,7 +94,7 @@ public fun PlanDetailPage(navCtrl: Navigator) {
 //                        getCurrentDate().dateToString(),
 //                        plan.endDate.dateToString()
 //                    ) 
-                      10
+                    10
                 }",
                 delay = lastDay
             )

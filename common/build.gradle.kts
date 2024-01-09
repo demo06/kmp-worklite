@@ -47,6 +47,7 @@ kotlin {
                 api(libs.precompose.base)
                 api(libs.precompose.viewmodel)
                 api(libs.dateTime)
+                api(libs.sqldelight.coroutines)
             }
         }
 

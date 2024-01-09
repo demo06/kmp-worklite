@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,7 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import funny.buildapp.common.data.source.plan.Plan
+import funny.buildapp.Plans
 import funny.buildapp.common.ui.page.DispatchEvent
 import funny.buildapp.common.ui.page.plan.ProgressCard
 import funny.buildapp.common.ui.page.plan.newPlan.PlanTitle
@@ -40,6 +42,8 @@ import funny.buildapp.common.ui.theme.cyan
 import funny.buildapp.common.ui.theme.red
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.ui.theme.transparent
+import funny.buildapp.common.utils.currentDate
+import funny.buildapp.common.utils.daysBetweenDates
 import funny.buildapp.common.utils.toFraction
 import funny.buildapp.common.widgets.AppToolsBar
 import funny.buildapp.common.widgets.CustomBottomSheet
@@ -48,7 +52,6 @@ import funny.buildapp.common.widgets.MyDatePicker
 import funny.buildapp.common.widgets.RoundCard
 import funny.buildapp.common.widgets.SpaceLine
 import funny.buildapp.common.widgets.SwitchButton
-import kotlinx.datetime.Clock
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 
@@ -56,26 +59,27 @@ import moe.tlaster.precompose.viewmodel.viewModel
 @Composable
 public fun CreateTodoPage(
     navCtrl: Navigator,
-
+    id: Int = 0
 ) {
-    val viewModel: CreateScheduleViewModel = viewModel(CreateScheduleViewModel::class){
+    val viewModel: CreateScheduleViewModel = viewModel(CreateScheduleViewModel::class) {
         CreateScheduleViewModel()
     }
-    val id = 0
     val uiState by viewModel.uiState.collectAsState()
     val plan = uiState.plan
     val todo = uiState.todo
+    val snackState = remember { SnackbarHostState() }
     var openDialog by remember { mutableStateOf(false) }
     var dialogState by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        viewModel.dispatch(CreateScheduleAction.GetTodoDetail(id = id.toLong()))
+        if (id != 0) viewModel.dispatch(CreateScheduleAction.GetTodoDetail(id = id.toLong()))
         viewModel.mainEvent.collect {
             when (it) {
-                is DispatchEvent.ShowToast -> it.msg
+                is DispatchEvent.ShowToast -> snackState.showSnackbar(it.msg)
                 is DispatchEvent.Back -> navCtrl.back()
             }
         }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +91,7 @@ public fun CreateTodoPage(
         ) {
             item {
                 AppToolsBar(
-                    title = if (id != 0) "编辑日程" else "添加日程",
+                    title = if (id != 0) "编辑待办" else "添加待办",
                     tint = themeColor,
                     backgroundColor = transparent,
                     onBack = { navCtrl.back() },
@@ -96,8 +100,8 @@ public fun CreateTodoPage(
             item {
                 PlanTitle(
                     text = todo.title,
-                    hint = "请在这里输入日程内容",
-                    title = "日程内容",
+                    hint = "请在这里输入待办内容",
+                    title = "待办内容",
                     onTextChange = {
                         viewModel.dispatch(CreateScheduleAction.SetTitle(it))
                     })
@@ -105,7 +109,7 @@ public fun CreateTodoPage(
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                    text = "日程设置",
+                    text = "待办设置",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                 )
@@ -114,11 +118,10 @@ public fun CreateTodoPage(
                 RoundCard {
                     TaskItem(
                         "执行时间",
-//                        if (todo.repeatable && todo.isAssociatePlan) plan.startDate.dateToString()
-//                        else uiState.startTime.dateToString()
-                        "2024-1-1 12:00"
+                        if (todo.repeatable == true && todo.planId !=0L) plan.startDate
+                        else uiState.startTime
                     ) {
-                        if (!todo.repeatable) {
+                        if (todo.repeatable==false) {
                             dialogState = 0
                             openDialog = !openDialog
                         } else {
@@ -129,11 +132,10 @@ public fun CreateTodoPage(
                     SpaceLine()
                     TaskItem(
                         "结束时间",
-                        "2024-1-1 13:00"
-//                        if (todo.repeatable && todo.isAssociatePlan) plan.endDate.dateToString()
-//                        else uiState.endTime.dateToString()
+                        if (todo.repeatable == true && todo.planId!=0L) plan.endDate
+                        else uiState.endTime
                     ) {
-                        if (!todo.repeatable) {
+                        if (todo.repeatable==false) {
                             dialogState = 1
                             openDialog = !openDialog
                         } else {
@@ -144,18 +146,22 @@ public fun CreateTodoPage(
                     TaskItem("关联计划", content = {
                         SwitchButton(
                             modifier = Modifier.height(25.dp),
-                            checked = todo.isAssociatePlan,
+                            checked = todo.planId!=0L,
                             onCheckedChange = {
-                                viewModel.dispatch(CreateScheduleAction.SetAssociateState)
+                                viewModel.dispatch(CreateScheduleAction.SetAssociateState(it))
                             })
                     })
                 }
             }
             item {
-                val percentage = plan.initialValue.toDouble() / plan.targetValue.toDouble() * 100
-//                val progress = String.format("%.1f", percentage).toDouble()
+                val percentage =
+                    if (plan.initialValue.toInt() == 0 || plan.targetValue.toInt() == 0) {
+                        0.0
+                    } else {
+                        (plan.targetValue.toDouble() / plan.targetValue.toDouble() * 100).toFraction()
+                    }
                 Column {
-                    AnimatedVisibility(visible = todo.isAssociatePlan) {
+                    AnimatedVisibility(visible = todo.planId!=0L) {
                         Column {
                             if (plan.id.toInt() != 0) {
                                 RoundCard {
@@ -163,8 +169,7 @@ public fun CreateTodoPage(
                                         title = plan.title,
                                         content = {
                                             Text(
-//                                                text = "当前进度：${if (progress.isNaN()) 0.0 else progress}%",
-                                                text = "当前进度：98.8%",
+                                                text = "当前进度：${if (percentage.isNaN()) 0.0 else percentage}%",
                                                 fontSize = 14.sp,
                                                 color = themeColor,
                                                 modifier = Modifier.padding(end = 8.dp)
@@ -178,7 +183,7 @@ public fun CreateTodoPage(
                                     TaskItem("是否在计划内重复", content = {
                                         SwitchButton(
                                             modifier = Modifier.height(25.dp),
-                                            checked = todo.repeatable,
+                                            checked = todo.repeatable==true,
                                             onCheckedChange = {
                                                 viewModel.dispatch(
                                                     CreateScheduleAction.SetIsRepeat
@@ -247,6 +252,7 @@ public fun CreateTodoPage(
                     plans = uiState.plans
                 )
             })
+        SnackbarHost(hostState = snackState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -254,7 +260,7 @@ public fun CreateTodoPage(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun PlanBottomSheet(
-    plans: List<Plan>,
+    plans: List<Plans>,
     onItemClick: (Int) -> Unit,
     onDismiss: () -> Unit = {}
 ) {
@@ -281,18 +287,19 @@ public fun PlanBottomSheet(
                 )
             }
             items(plans, key = { it.id }) {
-                val percentage = (it.initialValue.toDouble() / it.targetValue.toDouble() * 100).toFraction()
-//                val lastDay = daysBetweenDates(getCurrentDate().dateToString(), it.endDate.dateToString())
+                val percentage =
+                    (it.initialValue.toDouble() / it.targetValue.toDouble() * 100).toFraction()
+                val lastDay = daysBetweenDates(currentDate(), it.endDate).toLong()
                 ProgressCard(
-                    progress =percentage,
+                    progress = percentage,
                     title = it.title,
-                    status = when (it.status) {
-                        0 -> "未开始"
-                        1 -> "进行中"
-                        2 -> "已完成"
+                    status = when (it.state) {
+                        0L -> "未开始"
+                        1L -> "进行中"
+                        2L -> "已完成"
                         else -> "未知"
                     },
-                    lastDay = Clock.System.now().epochSeconds,
+                    lastDay = lastDay,
                     proportion = "${it.initialValue}/${it.targetValue}",
                     onClick = { onItemClick(it.id.toInt()) })
             }

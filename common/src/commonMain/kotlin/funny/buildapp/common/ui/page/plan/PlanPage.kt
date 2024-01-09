@@ -2,6 +2,7 @@ package funny.buildapp.common.ui.page.plan
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,12 +55,11 @@ public fun PlanPage(navCtrl: Navigator) {
     }
     LazyColumn(
         Modifier
-            .fillMaxSize().padding(bottom = 70.dp)
+            .fillMaxSize()
             .background(backgroundGradient)
     ) {
         item {
-            ScheduleToolBar(title = "计划进度")
-//            ScheduleToolBar(title = "2023-01-01".toLocalDate().toEpochDays().toString())
+            ScheduleToolBar(title = "项目进度")
         }
         items(
             items = plans,
@@ -76,7 +76,7 @@ public fun PlanPage(navCtrl: Navigator) {
                 ProgressCard(
                     progress = percentage,
                     title = it.title,
-                    status = when (1) {
+                    status = when (it.state.toInt()) {
                         0 -> "未开始"
                         1 -> "进行中"
                         2 -> "已完成"
@@ -88,6 +88,9 @@ public fun PlanPage(navCtrl: Navigator) {
                 )
             },
         )
+        item {
+            Box(Modifier.fillMaxWidth().height(70.dp))
+        }
     }
 }
 

@@ -74,17 +74,12 @@ public fun NewPlanPage(
     val snackState = remember { SnackbarHostState() }
     var dialogState by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        viewModel.dispatch(NewPlanAction.GetPlanDetail(id = id))
+        if (id != 0) viewModel.dispatch(NewPlanAction.GetPlanDetail(id = id))
         viewModel.mainEvent.collect {
             when (it) {
-                is DispatchEvent.ShowToast -> {
-                    snackState.showSnackbar("添加成功")
-//                    it.msg.showToast()
-                }
-
-                is DispatchEvent.Back -> {
-                    navCtrl.back()
-                }
+                is DispatchEvent.ShowToast -> snackState.showSnackbar(it.msg)
+                is DispatchEvent.Back -> navCtrl.back()
+                else -> {}
             }
         }
     }
@@ -138,8 +133,8 @@ public fun NewPlanPage(
             }
             item {
                 DateCard(
-                    startTime =plan.startDate,
-                    endTime =plan.endDate,
+                    startTime = plan.startDate,
+                    endTime = plan.endDate,
                     startTimeClick = {
                         dialogState = 0
                         viewModel.dispatch(NewPlanAction.SetDialogState)

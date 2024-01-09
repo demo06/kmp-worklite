@@ -12,7 +12,7 @@ import funny.buildapp.common.database.database
 
 fun main() = application {
     database=Database(DriverFactory().createDriver())
-    Window(onCloseRequest = ::exitApplication) {
+    Window(onCloseRequest = ::exitApplication, title = "WorkLite") {
         MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
             UIShow()
         }

@@ -4,6 +4,7 @@ import funny.buildapp.Plans
 import funny.buildapp.common.data.PlanRepository
 import funny.buildapp.common.ui.page.BaseViewModel
 import funny.buildapp.common.ui.page.DispatchEvent
+import funny.buildapp.common.utils.currentDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.toLocalDate
 
@@ -31,17 +32,13 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
 
 
     private fun getPlanDetail(id: Int) {
-//        fetchData(
-//            request = { repo.getPlanDetail(id.toLong()) },
-//            onSuccess = {
-//                _uiState.setState {
-//                    copy(
-//                        plan = it,
-//                        datePickerDialog = false
-//                    )
-//                }
-//            }
-//        )
+        val plan = repo.selectById(id.toLong())
+        _uiState.setState {
+            copy(
+                plan = plan,
+                datePickerDialog = false
+            )
+        }
     }
 
 
@@ -64,30 +61,11 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
         if (!checkParams()) return
         repo.insert(_uiState.value.plan)
         _event.sendEvent(DispatchEvent.Back)
-//        fetchData(
-//            request = { },
-//            onSuccess = {
-//                "保存成功".toast()
-//                _event.sendEvent(DispatchEvent.Back)
-//            },
-//            onFailed = {
-//                "保存失败".toast()
-//            }
-//        )
     }
 
     private fun deletePlan() {
-//        fetchData(
-//            request = { repo.delete(_uiState.value.plan.id) },
-//            onSuccess = {
-//                "删除成功".toast()
-//                _event.sendEvent(DispatchEvent.Back)
-//            },
-//            onFailed = {
-//                "删除失败".toast()
-//            }
-//        )
-
+        repo.delete(_uiState.value.plan.id)
+        _event.sendEvent(DispatchEvent.Back)
     }
 
     private fun setTitle(title: String) {
@@ -130,8 +108,8 @@ public data class NewPlanUiState(
     val plan: Plans = Plans(
         id = 0,
         title = "",
-        startDate = "1970-01-01",
-        endDate = "1970-01-01",
+        startDate = currentDate(),
+        endDate = currentDate(),
         initialValue = 0,
         targetValue = 100,
         autoAdjust = false,

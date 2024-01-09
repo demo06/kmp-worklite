@@ -18,16 +18,12 @@ public fun AppNav(navCtrl: Navigator) {
         initialRoute = Route.HOME,
     ) {
         //home
-        scene(route = Route.HOME,/*navTransition= NavTransition(createTransition = fadeIn())*/) {
+        scene(route = Route.HOME) {
             PlanPage(navCtrl)
         }
         //new task
         scene(
             route = Route.NEW_PLAN + "/{id}",
-//            arguments = listOf(navArgument("id") {
-//                type = NavType.IntType
-//                defaultValue = 0
-//            })
         ) {
             val id = it.path<Int>("id") ?: 0
             NewPlanPage(navCtrl = navCtrl, id = id)
@@ -39,14 +35,9 @@ public fun AppNav(navCtrl: Navigator) {
         //detail
         scene(
             route = Route.PLAN_DETAIL + "/{id}",
-            // TODO: change do this
-//            arguments = listOf(navArgument("id") {
-//                type = NavType.IntType
-//                defaultValue = 0
-//            })
         ) {
-//            PlanDetailPage(navCtrl, it)
-            PlanDetailPage(navCtrl)
+            val id = it.path<Int>("id") ?: 0
+            PlanDetailPage(navCtrl, id)
         }
         //schedule
         scene(route = Route.SCHEDULE) {
@@ -55,14 +46,9 @@ public fun AppNav(navCtrl: Navigator) {
         //create schedule
         scene(
             route = Route.CREATE_TODO + "/{id}",
-            // TODO: change do this
-//            arguments = listOf(navArgument("id") {
-//                type = NavType.IntType
-//                defaultValue = 0
-//            })
         ) {
-//            CreateTodoPage(navCtrl, it)
-            CreateTodoPage(navCtrl)
+            val id = it.path<Int>("id") ?: 0
+            CreateTodoPage(navCtrl = navCtrl, id = id)
         }
     }
 }

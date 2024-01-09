@@ -23,21 +23,29 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 
 @Composable
 public fun HomePage() {
-    val navCtrl= rememberNavigator()
+    val navCtrl = rememberNavigator()
     val navBackStackEntry by navCtrl.currentEntry.collectAsState(null)
     val currentDestination = navBackStackEntry?.path
     Scaffold(
         modifier = Modifier.background(backgroundGradient)
             .systemBarsPadding(),
         floatingActionButton = {
-            if (currentDestination == Route.HOME || currentDestination == Route.SCHEDULE) {
+            if (currentDestination == Route.HOME || currentDestination == Route.TODO|| currentDestination == Route.SCHEDULE) {
                 FloatingActionButton(
                     containerColor = themeColor,
                     onClick = {
-                        if (currentDestination == Route.HOME) {
-                            RouteUtils.navTo(navCtrl, Route.NEW_PLAN, 0)
-                        } else if (currentDestination == Route.SCHEDULE) {
-                            RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)
+                        when (currentDestination) {
+                            Route.HOME -> {
+                                RouteUtils.navTo(navCtrl, Route.NEW_PLAN, 0)
+                            }
+
+                            Route.TODO -> {
+                                RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 0)
+                            }
+
+                            Route.SCHEDULE -> {
+                                RouteUtils.navTo(navCtrl, Route.CREATE_TODO, 1)
+                            }
                         }
 
                     }
