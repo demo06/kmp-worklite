@@ -27,4 +27,4 @@ selectByPlanId:
 SELECT * FROM todos WHERE planId=?;
 
 selectByDate:
-SELECT * FROM todos WHERE startDate>=? AND endDate<=?;
+SELECT * FROM todos WHERE startDate<=? AND endDate>=?;

@@ -110,6 +110,9 @@ public fun ScheduleCard(todos: List<Todos>, onItemClick: (Long) -> Unit) {
                 }
             }
         )
+        item {
+            Box(Modifier.fillMaxWidth().height(70.dp))
+        }
     }
 }
 

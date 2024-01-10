@@ -2,10 +2,12 @@ package funny.buildapp.common.ui.page.todo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -65,6 +67,9 @@ public fun TodoPage( ) {
             TodoItem(title = it.title, selected = true,
                 onClick = { viewModel.dispatch(TodoAction.UpTodayTask(it.copy(state = 0))) }
             )
+        }
+        item {
+            Box(Modifier.fillMaxWidth().height(70.dp))
         }
     }
 }

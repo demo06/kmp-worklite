@@ -26,7 +26,7 @@ import funny.buildapp.common.database.database
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database=Database(DriverFactory(this).createDriver())
+        database =Database(DriverFactory(this).createDriver())
         setContent {
             CustomMaterialTheme {
                 UIShow()

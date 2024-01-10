@@ -42,6 +42,7 @@ import funny.buildapp.common.ui.theme.cyan
 import funny.buildapp.common.ui.theme.red
 import funny.buildapp.common.ui.theme.themeColor
 import funny.buildapp.common.ui.theme.transparent
+import funny.buildapp.common.ui.theme.white
 import funny.buildapp.common.utils.currentDate
 import funny.buildapp.common.utils.daysBetweenDates
 import funny.buildapp.common.utils.toFraction
@@ -289,6 +290,7 @@ public fun PlanBottomSheet(
         content = {
             stickyHeader {
                 AppToolsBar(
+                    tint = white,
                     title = "选择计划",
                     backgroundColor = cyan,
                     imageVector = Icons.Default.Close,

@@ -157,7 +157,8 @@ public fun DetailContent(
                     append("天")
                 } else {
                     withStyle(style = SpanStyle(color = red2)) {
-                        append(abs(surplus).toString())
+                        if (delay == 0L) append("今")
+                        else append(abs(surplus).toString())
                     }
                     append("天后结束  ")
                 }

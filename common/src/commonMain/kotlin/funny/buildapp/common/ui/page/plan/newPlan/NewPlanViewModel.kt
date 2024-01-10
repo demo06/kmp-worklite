@@ -65,7 +65,13 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
     private fun savePlan() {
         if (!checkParams()) return
         fetchData(
-            request = { repo.insert(_uiState.value.plan) },
+            request = {
+                if (_uiState.value.plan.id == 0L) {
+                    repo.insert(_uiState.value.plan)
+                } else {
+                    repo.update(_uiState.value.plan)
+                }
+            },
             onSuccess = { _event.sendEvent(DispatchEvent.Back) },
             onFailed = { _event.sendEvent(DispatchEvent.ShowToast(it)) }
         )

@@ -25,7 +25,7 @@ private fun UIShow() {
 }
 
 public fun MainViewController(): UIViewController = ComposeUIViewController {
-    database= Database(DriverFactory().createDriver())
+    database = Database(DriverFactory().createDriver())
     MaterialTheme(
         colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
     ) {

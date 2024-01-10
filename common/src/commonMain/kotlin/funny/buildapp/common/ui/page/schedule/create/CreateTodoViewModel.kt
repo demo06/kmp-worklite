@@ -66,7 +66,17 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
     private fun getPlanDetail(id: Long) {
         fetchData(
             request = { planRepo.selectById(id) },
-            onSuccess = { _uiState.setState { copy(plan = it) } }
+            onSuccess = {
+                _uiState.setState {
+                    copy(plan = it)
+                }
+            },
+            onFailed = {
+                _uiState.setState {
+                    copy(todo = _uiState.value.todo.copy(planId = 0L, repeatable = false), isRelated = false)
+                }
+                repo.update(_uiState.value.todo)
+            }
         )
     }
 
@@ -75,7 +85,12 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
             request = { repo.selectById(id) },
             onSuccess = {
                 _uiState.setState {
-                    copy(todo = it, startTime = it.startDate, endTime = it.endDate)
+                    copy(
+                        todo = it,
+                        startTime = it.startDate,
+                        endTime = it.endDate,
+                        isRelated = it.planId != 0L
+                    )
                 }
                 if (it.planId != 0L) {
                     getPlanDetail(it.planId ?: 0L)
@@ -104,12 +119,22 @@ public class CreateScheduleViewModel : BaseViewModel<CreateScheduleAction>() {
         if (!checkParams()) return
         fetchData(
             request = {
-                repo.insert(
-                    todo = _uiState.value.todo.copy(
-                        startDate = if (_uiState.value.todo.repeatable == true) _uiState.value.plan.startDate else _uiState.value.startTime,
-                        endDate = if (_uiState.value.todo.repeatable == true) _uiState.value.plan.endDate else _uiState.value.endTime
+                if (_uiState.value.todo.id == 0L) {
+                    repo.insert(
+                        todo = _uiState.value.todo.copy(
+                            startDate = if (_uiState.value.todo.repeatable == true) _uiState.value.plan.startDate else _uiState.value.startTime,
+                            endDate = if (_uiState.value.todo.repeatable == true) _uiState.value.plan.endDate else _uiState.value.endTime
+                        )
                     )
-                )
+                } else {
+                    repo.update(
+                        todo = _uiState.value.todo.copy(
+                            startDate = if (_uiState.value.todo.repeatable == true) _uiState.value.plan.startDate else _uiState.value.startTime,
+                            endDate = if (_uiState.value.todo.repeatable == true) _uiState.value.plan.endDate else _uiState.value.endTime
+                        )
+                    )
+                }
+
             },
             onSuccess = {
                 increaseTodoCount()

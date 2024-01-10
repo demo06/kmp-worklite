@@ -154,7 +154,7 @@ public fun ProgressCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (lastDay >= 0) "$lastDay" else "已延期",
+                text = if (lastDay < 0) "已延期" else if (lastDay == 0L) "今" else "$lastDay",
                 fontSize = 12.sp,
                 color = Color.Red
             )
