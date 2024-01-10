@@ -300,7 +300,7 @@ public fun PlanBottomSheet(
             items(plans, key = { it.id }) {
                 val percentage =
                     (it.initialValue.toDouble() / it.targetValue.toDouble() * 100).toFraction()
-                val lastDay = daysBetweenDates(currentDate(), it.endDate).toLong()
+                val lastDay = daysBetweenDates( it.endDate,currentDate()).toLong()
                 ProgressCard(
                     progress = percentage,
                     title = it.title,
