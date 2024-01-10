@@ -62,8 +62,44 @@ public class NewPlanViewModel : BaseViewModel<NewPlanAction>() {
         }
     }
 
+    private fun changeState() {
+        val initialValue = _uiState.value.plan.initialValue
+        val endValue = _uiState.value.plan.targetValue
+        when {
+            initialValue == 0L -> {
+                _uiState.setState {
+                    copy(
+                        plan = _uiState.value.plan.copy(
+                            state = 0L
+                        )
+                    )
+                }
+            }
+            initialValue > 0L -> {
+                _uiState.setState {
+                    copy(
+                        plan = _uiState.value.plan.copy(
+                            state = 1L
+                        )
+                    )
+                }
+            }
+            initialValue >= endValue -> {
+                _uiState.setState {
+                    copy(
+                        plan = _uiState.value.plan.copy(
+                            state = 2L
+                        )
+                    )
+                }
+            }
+        }
+
+    }
+
     private fun savePlan() {
         if (!checkParams()) return
+        changeState()
         fetchData(
             request = {
                 if (_uiState.value.plan.id == 0L) {
