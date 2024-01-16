@@ -96,7 +96,7 @@ android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         namespace = "funny.buildapp.common"
-        minSdk = 26
+        minSdk = 23
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
