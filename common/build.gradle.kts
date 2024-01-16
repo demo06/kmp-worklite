@@ -17,7 +17,7 @@ kotlin {
         }
     }
     jvm("desktop") {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
     ios()
     iosX64()
