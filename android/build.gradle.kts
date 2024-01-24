@@ -2,6 +2,8 @@ plugins {
     id("org.jetbrains.compose")
     id("com.android.application")
     kotlin("android")
+
+    id("plugin.release.apk.upload")
 }
 
 group = "funny.buildapp"
@@ -28,6 +30,13 @@ android {
         getByName("release") {
             isMinifyEnabled = false
         }
+    }
+    flavorDimensions("base")
+    productFlavors {
+        create("staging")//test
+        create("dev")
+        create("press")
+        create("prod")
     }
 }
 

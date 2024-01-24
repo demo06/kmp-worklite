@@ -1,3 +1,9 @@
+rootProject.name = "worklite"
+
+include(":android")
+include(":desktop")
+include(":common")
+
 pluginManagement {
     repositories {
         google()
@@ -5,10 +11,5 @@ pluginManagement {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
+    includeBuild("framework")
 }
-
-rootProject.name = "worklite"
-
-include(":android")
-include(":desktop")
-include(":common")
