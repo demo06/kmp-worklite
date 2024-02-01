@@ -19,7 +19,7 @@ kotlin {
     jvm("desktop") {
         jvmToolchain(17)
     }
-    ios()
+    applyDefaultHierarchyTemplate()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
